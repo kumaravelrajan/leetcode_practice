@@ -10,13 +10,15 @@ Val int
 Next *ListNode
 }
 
-func forwardlist1orlist2(list1or2 **ListNode, ct_list3 **ListNode, prev_list3 **ListNode){
-	(*ct_list3).Val = (*list1or2).Val
-	(*ct_list3).Next = new(ListNode)
-	*prev_list3 = *ct_list3
-	*ct_list3 = (*ct_list3).Next
+func forwardlist1orlist2(list1or2 *ListNode, ct_list3 *ListNode, prev_list3 *ListNode) (*ListNode, *ListNode, *ListNode){
+	ct_list3.Val = list1or2.Val
+	ct_list3.Next = new(ListNode)
+	prev_list3 = ct_list3
+	ct_list3 = ct_list3.Next
 
-	*list1or2 = (*list1or2).Next
+	list1or2 = list1or2.Next
+
+	return list1or2, ct_list3, prev_list3
 }
 
 func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
@@ -42,27 +44,27 @@ func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
 
 			if ct_list1.Val < ct_list2.Val{
 
-			forwardlist1orlist2(&ct_list1, &ct_list3, &prev_list3)
+			ct_list1, ct_list3, prev_list3 = forwardlist1orlist2(ct_list1, ct_list3, prev_list3)
 
 			} else if ct_list2.Val < ct_list1.Val{
 
-				forwardlist1orlist2(&ct_list2, &ct_list3, &prev_list3)
+				ct_list2, ct_list3, prev_list3 = forwardlist1orlist2(ct_list2, ct_list3, prev_list3)
 
 
 			} else if ct_list1.Val == ct_list2.Val {
 
-				forwardlist1orlist2(&ct_list1, &ct_list3, &prev_list3)
+				ct_list1, ct_list3, prev_list3 = forwardlist1orlist2(ct_list1, ct_list3, prev_list3)
 
 			}
 		} else {
 
 			if ct_list1 != nil && ct_list2 == nil {
 
-				forwardlist1orlist2(&ct_list1, &ct_list3, &prev_list3)
+				ct_list1, ct_list3, prev_list3 = forwardlist1orlist2(ct_list1, ct_list3, prev_list3)
 
 			} else{
 
-				forwardlist1orlist2(&ct_list2, &ct_list3, &prev_list3)
+				ct_list2, ct_list3, prev_list3 = forwardlist1orlist2(ct_list2, ct_list3, prev_list3)
 
 			}
 
