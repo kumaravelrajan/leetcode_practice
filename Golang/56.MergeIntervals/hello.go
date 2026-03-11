@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"cmp"
-	"slices"
+	"sort"
 )
 
 func merge(intervals [][]int) [][]int {
