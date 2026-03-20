@@ -5,8 +5,8 @@ import (
 	// "slices"
 )
 
-func bfs(adj_matrix [][]int)([]int){
-	num_vertex := len(adj_matrix)
+func bfs(adj_list [][]int)([]int){
+	num_vertex := len(adj_list)
 
 	visited := make([]bool, num_vertex)
 	res := []int{}
@@ -21,7 +21,7 @@ func bfs(adj_matrix [][]int)([]int){
 		queue = queue[1:]
 
 		res = append(res, curr)
-		curr_neighbours := adj_matrix[curr]
+		curr_neighbours := adj_list[curr]
 
 		for _, neighbour := range curr_neighbours{
 			if !visited[neighbour]{
