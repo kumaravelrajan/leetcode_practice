@@ -6,31 +6,45 @@ package main
 // )
 
 func totalFruit(fruits []int) int {
-    last, secondLast := -1, -1
-	consecutiveLastCount, curr, max := 0, 0, 0
+    lookup := make(map[int]int)
+    left := 0
+    maxLen := 0
 
-	for _, fruit := range fruits{
-		if fruit == last{
-			curr++
-			consecutiveLastCount++
-		} else if fruit == secondLast{
-			curr++
-		} else {
-			secondLast = last
-			last = fruit
-			curr = consecutiveLastCount + 1
-			consecutiveLastCount = 1
-		}
+    for right, fruit := range fruits{
+        if len(lookup) < 2 {
+            lookup[fruit]++
+        } else if len(lookup) == 2 {
+            _, status := lookup[fruit]
 
-		if curr > max {
-			max = curr
-		}
+            if status{
+                lookup[fruit]++
+            } else {
+                // fruit not present in lookup. 
 
-	}
+                for len(lookup) == 2 {
+                    lookup[fruits[left]]--
 
-	return max
+                    if lookup[fruits[left]] == 0{
+                        delete(lookup, fruits[left])                        
+                    }
+
+                    left++
+                }
+
+                lookup[fruit]++
+            }
+        }
+
+        currLen := right - left + 1
+
+        if currLen > maxLen{
+            maxLen = currLen
+        }
+    }
+
+    return maxLen
 }
 
 func main(){
-	totalFruit([]int{1, 1})
+	totalFruit([]int{1,2,1})
 }
