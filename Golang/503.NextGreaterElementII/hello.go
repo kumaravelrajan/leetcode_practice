@@ -1,10 +1,11 @@
 package main
 
 func nextGreaterElements(nums []int) []int {
-    // key: (x), value: (next greater of x)
+    // key: (index x), value: (next greater of index x)
     lookup := make(map[int]int)
     monStack := make([]int, 0, len(nums))
     result := make([]int, 0, len(nums))
+	indices := make([]int, 0, len(nums))
 
     isFirstPass := true
 
@@ -13,20 +14,19 @@ func nextGreaterElements(nums []int) []int {
 
         if len(monStack) == 0 {
             monStack = append(monStack, currNum)
+			indices = append(indices, i)
         } else {
-            for len(monStack) > 0 && monStack[len(monStack)-1] < currNum{
-				if _, found := lookup[monStack[len(monStack)-1]]; !found{
-	                lookup[monStack[len(monStack)-1]] = currNum
+            for len(monStack) > 0 && monStack[len(monStack) - 1] < currNum{
+				if _, found := lookup[indices[len(monStack) - 1]]; !found{
+	                lookup[indices[len(monStack) - 1]] = currNum
 				}
                 monStack = monStack[ : len(monStack)-1]
+				indices = indices[ : len(indices) - 1]
             }
         }
 
-        if len(monStack) > 0 && monStack[len(monStack) - 1] == currNum {
-            
-        } else {
-            monStack = append(monStack, currNum)
-        }
+        monStack = append(monStack, currNum)
+		indices = append(indices, i)
 
         if isFirstPass && i == len(nums) - 1{
             i = -1
@@ -34,8 +34,8 @@ func nextGreaterElements(nums []int) []int {
         }
     }
 
-    for _, currNum := range nums{
-        if nextGreaterNum, found := lookup[currNum]; found{
+    for i := range nums{
+        if nextGreaterNum, found := lookup[i]; found{
             result = append(result, nextGreaterNum)
         } else {
             result = append(result, -1)
@@ -46,5 +46,5 @@ func nextGreaterElements(nums []int) []int {
 }
 
 func main(){
-	nextGreaterElements([]int{5,4,3,2,1})
+	nextGreaterElements([]int{1,2,3,4,5,6,5,4,5,1,2,3})
 }
