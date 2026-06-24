@@ -6,32 +6,31 @@ import (
 )
 
 func bfs(adj_list [][]int)([]int){
-	num_vertex := len(adj_list)
+	v := len(adj_list)
 
-	visited := make([]bool, num_vertex)
-	res := []int{}
-	queue := []int{}
+	visited := make([]bool, v)
+	result := make([]int, 0, v)
+	q := make([]int, 0, v)
 
 	src := 0
+
+	q = append(q, src)
 	visited[src] = true
-	queue = append(queue, src)
 
-	for len(queue) > 0{
-		curr := queue[0]
-		queue = queue[1:]
+	for len(q) > 0 {
+		curr := q[0]
+		q = q[1:]
 
-		res = append(res, curr)
-		curr_neighbours := adj_list[curr]
+		result = append(result, curr)
 
-		for _, neighbour := range curr_neighbours{
-			if !visited[neighbour]{
-				queue = append(queue, neighbour)
-				visited[neighbour] = true
+		for _, adj := range adj_list[curr]{
+			if visited[adj] == false{
+				visited[adj] = true
+				q = append(q, adj)
 			}
 		}
 	}
-
-	return res
+	return result
 }
 
 func main(){
