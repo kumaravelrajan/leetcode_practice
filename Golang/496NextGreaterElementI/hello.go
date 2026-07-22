@@ -1,39 +1,51 @@
 package main
 
+// import "fmt"
+
 func nextGreaterElement(nums1 []int, nums2 []int) []int {
-    monStack := make([]int, 0, len(nums2))
-    lookup := make(map[int]int)
-    // tos := -1
+    result := make([]int, len(nums1))
 
-    for i := len(nums2) - 1; i >= 0; i--{
-        currNum := nums2[i]
-        if len(monStack) == 0{
-            monStack = append(monStack, currNum)
-            lookup[currNum] = -1
-        } else {
-            for len(monStack) > 0 && monStack[len(monStack)-1] < currNum{
-                monStack = monStack[:len(monStack)-1]
-            }
-
-            monStack = append(monStack, currNum)
-
-            if len(monStack) > 1 {
-                lookup[currNum] = monStack[len(monStack) - 2]
-            } else {
-                lookup[currNum] = -1
-            }
-        }
+    for i := 0; i < len(result); i++{
+        result[i]  = -1
     }
 
-    result := make([]int, 0, len(nums1))
+    // Monotonic decreasing stack
+    monStack := []int{}
 
-    for _, currNum := range nums1{
-        result = append(result, lookup[currNum])
+    lookupNums1 := make(map[int]int)
+
+    for i, val := range nums1{
+        lookupNums1[val] = i
+    }
+
+    for _, val := range nums2{
+        if len(monStack) == 0 {
+            monStack = append(monStack, val)
+        } else {
+            top := monStack[len(monStack) - 1]
+
+            if val < top{
+                monStack = append(monStack, val)
+            } else {
+                for val > top {
+                    if _, found := lookupNums1[top]; found{
+                        result[lookupNums1[top]] = val
+                    }
+                    monStack = monStack[: len(monStack) - 1]
+                    if len(monStack) > 0 {
+                        top = monStack[len(monStack) - 1]
+                    } else {
+                        break
+                    }
+                }
+                monStack = append(monStack, val)
+            }
+        }
     }
 
     return result
 }
 
 func main(){
-	nextGreaterElement([]int{2,4}, []int{1,2,3,4})
+	nextGreaterElement([]int{1,3,5,2,4}, []int{6,5,4,3,2,1,7})
 }
