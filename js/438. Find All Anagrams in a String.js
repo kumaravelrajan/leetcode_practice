@@ -23,11 +23,12 @@ var findAnagrams = function(s, p) {
 
             if (targetChars[s[right]] > 0){
                 missing--;
-                targetChars[s[right]]--;
+                
             } else {
                 missing++;
-                targetChars[s[right]]--;
             }
+
+            targetChars[s[right]]--;
 
             if (missing === 0){
                 result.push(left);
@@ -41,13 +42,13 @@ var findAnagrams = function(s, p) {
 
         // Move left by 1.
         if (targetChars[s[left]] !== undefined){
-            targetChars[s[left]]++;
-
-            if (targetChars[s[left]] === 0){
+            if (targetChars[s[left]] < 0){
                 missing--;
             } else {
                 missing++;
             }
+
+            targetChars[s[left]]++;
         }
 
         
@@ -59,13 +60,13 @@ var findAnagrams = function(s, p) {
         if (targetChars[s[right]] !== undefined){
             // relevant character found
 
-            targetChars[s[right]]--;
-
-            if (targetChars[s[right]] === 0){
-                missing --;
-            }  else {
+            if (targetChars[s[right]] > 0){
+                missing--;
+            } else {
                 missing++;
             }
+
+            targetChars[s[right]]--;
 
             if (missing === 0){
                 // Anagram found
