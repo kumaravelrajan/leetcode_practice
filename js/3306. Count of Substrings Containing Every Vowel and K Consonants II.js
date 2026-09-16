@@ -1,52 +1,61 @@
 /**
- * Count substrings of s that contain every vowel at least once
- * and have exactly k consonants.
- *
- * Trick: exactly(k) = atMost(k) - atMost(k-1)
- * atMost(k) is monotonic (consonant count only grows as window grows),
- * so it CAN be solved with a normal two-pointer sliding window.
+ * @param {string} word
+ * @param {number} k
+ * @return {number}
  */
-function countOfSubstrings(s, k) {
-  const atMost = (maxConsonants) => {
-    if (maxConsonants < 0) return 0; // can't have negative consonants
+var countOfSubstrings = function(word, k) {
+    function atMostK(maxConsonants){
+        if (maxConsonants < 0) return 0;
 
-    const VOWELS = new Set(['a', 'e', 'i', 'o', 'u']);
-    // lastSeen[v] = most recent index where vowel v has occurred so far
-    const lastSeen = { a: -1, e: -1, i: -1, o: -1, u: -1 };
+        let l = 0, r = 0; 
+        let result = 0; 
+        let vowelLastSeenAt = {'a': -1, 'e':-1, 'i': -1, 'o': -1, 'u': -1};
+        let consCount = 0;
 
-    let left = 0;        // smallest start that keeps consonants <= maxConsonants
-    let consonants = 0;  // consonant count in current window [left, right]
-    let total = 0;
+        for (; r < word.length; r++){
+            let ch = word[r];
 
-    for (let right = 0; right < s.length; right++) {
-      const ch =  s[right];
-      if (VOWELS.has(ch)) {
-        lastSeen[ch] = right;
-      } else {
-        consonants++;
-      }
+            if (checkIfVowel(ch)){
+                vowelLastSeenAt[ch] = r;
+            } else {
+                consCount++;
+            }
 
-      // Standard "at most k" shrink: only ever moves left forward.
-      while (consonants > maxConsonants) {
-        if (!VOWELS.has(s[left])) consonants--;
-        left++;
-      }
+            let minVowelIndex = Math.min(vowelLastSeenAt['a'], vowelLastSeenAt['e'], vowelLastSeenAt['i'], vowelLastSeenAt['o'], vowelLastSeenAt['u']);
 
-      // Furthest-right start that still keeps ALL 5 vowels in the window.
-      const minLastSeen = Math.min(
-        lastSeen.a, lastSeen.e, lastSeen.i, lastSeen.o, lastSeen.u
-      );
-      if (minLastSeen === -1) continue; // some vowel hasn't appeared yet at all
+            if (minVowelIndex === -1){
+                // Some vowel has not yet appeared. 
+                continue; 
+            }
 
-      // Valid starts are those in [left, minLastSeen].
-      const validStarts = minLastSeen - left + 1;
-      if (validStarts > 0) total += validStarts;
+            while (consCount > maxConsonants){
+                if (!checkIfVowel(word[l])){
+                    consCount--;
+                }
+                l++;
+            }
+
+            let countRelevantSubarrays = minVowelIndex - l + 1; 
+
+            if (countRelevantSubarrays > 0){
+                result += countRelevantSubarrays;
+            }
+        }        
+
+        return result; 
     }
 
-    return total;
-  };
+    return atMostK(k) - atMostK(k-1);
+}
 
-  return atMost(k) - atMost(k - 1);
+function checkIfVowel(c){
+    let vowelSet = new Set(['a','e','i','o','u',]);
+
+    if (vowelSet.has(c)){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 console.log(countOfSubstrings("ieaouqqieaouqq", 1));
