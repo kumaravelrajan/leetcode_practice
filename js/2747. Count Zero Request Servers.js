@@ -9,6 +9,8 @@ import { Deque } from "@datastructures-js/deque";
  */
 var countServers = function(n, logs, x, queries) {
     let originalQueryIndex = {};
+    let serverIdFreqInWindow = {};
+    let arr = new Array(queries.length).fill(-1);
 
     // queries can have duplicates. No guarantee that they are all unique values. Hence, key: queries[i], value : list of i - [i, j, k] etc. Then at the end when results are available and we want to insert in arr[i], we can simply do 
     // arr[originalQueryIndex[number][0]] = (no. of zero request servers) and then popfront from originalQueryIndex[number].
@@ -40,7 +42,52 @@ var countServers = function(n, logs, x, queries) {
         }
     });
 
-    return -1;
+    // Cleanup logs such that no record exists where log time < queries[0] - x (lowest possible value for inclusion.)
+
+    let cleanupI = 0; 
+
+    while(logs[cleanupI][1] < queries[0] - x){
+        cleanupI++;
+    }
+
+    // Start the processing
+    let l = 0, r = 0, queryI = 0, logsL = cleanupI, logsR = cleanupI; 
+    for (r = leftExtreme; r <= rightExtreme; r++){
+        while (logsR < logs.length && logs[logsR][1] === r){
+            // The time of the current logs[logsR] matches r along the imaginary line. This means, the current log is valid for the current window. Record it in the hashmap.
+
+            serverIdFreqInWindow[logs[logsR][0]] = (serverIdFreqInWindow[logs[logsR][0]] || 0) + 1;
+            logsR++;
+        }
+
+        if (r === queries[queryI]){
+            let temp = queries[queryI];
+            
+            while(queries[queryI] === temp){
+                // Write answer to arr.
+
+                arr[originalQueryIndex[queries[queryI]].front()] = n - Object.keys(serverIdFreqInWindow).length;
+                originalQueryIndex[queries[queryI]].popFront();
+                queryI++;
+            }
+
+            while (l < queries[queryI] - x){
+                while (logs[logsL][1] < queries[queryI] - x){
+                    serverIdFreqInWindow[logs[logsL][0]]--;
+
+                    if (serverIdFreqInWindow[logs[logsL][0]] === 0){
+                        delete serverIdFreqInWindow[logs[logsL][0]];
+                    }
+
+                    logsL++;
+                }
+
+                l++;
+            }
+        }
+    }
+
+    return arr;
 };
 
-console.log(countServers(3, [[2,4],[2,1],[1,2],[3,1]], 2, [3, 4]));
+console.log(countServers(3, [[1,3],[2,6],[1,5]], 5, [10, 11]));
