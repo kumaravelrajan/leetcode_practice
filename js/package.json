@@ -1,0 +1,6 @@
+{
+  "type" : "module",
+  "dependencies": {
+    "@datastructures-js/deque": "^1.0.8"
+  }
+}
