@@ -15,11 +15,16 @@ var maximumWhiteTiles = function(tiles, carpetLen) {
     let blanksInWindow = 0;
 
     for (; r < tiles.length; r++){
+
         if (r > 0){
             blanksInWindow += tiles[r][0] - 1 - tiles[r-1][1];
         }
 
         let tilesInCurrentR = tiles[r][1] - tiles[r][0] + 1;
+
+        if (tilesInCurrentR > carpetLen){
+            return carpetLen;
+        }
 
         if (tilesInWindow + blanksInWindow + (tilesInCurrentR) <= carpetLen){
             // Current interval is alright. It can be included in our calculations.
@@ -38,10 +43,16 @@ var maximumWhiteTiles = function(tiles, carpetLen) {
             }
 
             // Shrink window from left
-            while((tilesInWindow + blanksInWindow + (tilesInCurrentR)) > carpetLen){
+            while(l < r && (tilesInWindow + blanksInWindow + (tilesInCurrentR)) > carpetLen){
                 tilesInWindow -= tiles[l][1] - tiles[l][0] + 1;
                 l++;
                 blanksInWindow -= tiles[l][0] - 1 - tiles[l-1][1];
+
+                tilesCoverableInR = carpetLen - (tilesInWindow + blanksInWindow);
+
+                if (Math.min(tilesCoverableInR, tilesInCurrentR) + tilesInWindow > result){
+                    result = Math.min(tilesCoverableInR, tilesInCurrentR) + tilesInWindow;
+                }
             }
 
             tilesInWindow += tilesInCurrentR;
